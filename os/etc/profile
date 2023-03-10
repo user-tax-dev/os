@@ -1,0 +1,16 @@
+umask 022
+export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:/bin:/opt/bun/bin
+
+export BUN_INSTALL=/opt/bun
+export RUSTUP_HOME=/opt/rust
+export CARGO_HOME=/opt/rust
+export GOPATH=/usr
+export PAGER=bat
+export PNPM_HOME="/opt/pnpm"
+export PATH="$PNPM_HOME:$PATH"
+
+. /opt/rust/env
+
+eval "$(rtx activate --quiet bash)"
+
+/etc/run_dir.sh /etc/profile.d
