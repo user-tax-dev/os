@@ -9,3 +9,5 @@ export PYTHON_BUILD_MIRROR_URL_SKIP_CHECKSUM=1
 
 export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
 export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
+
+export NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node
