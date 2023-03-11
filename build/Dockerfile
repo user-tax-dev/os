@@ -13,7 +13,9 @@ libreadline-dev libbz2-dev libsqlite3-dev \
 libzstd-dev protobuf-compiler zsh \
 software-properties-common curl wget cmake \
 autoconf automake libtool &&\
-passwd -d root && chsh -s /bin/zsh root
+passwd -d root && chsh -s /bin/zsh root &&\
+apt remove --purge --assume-yes snapd gnome-software-plugin-snap &&\
+apt autoremove -y
 
 SHELL ["/bin/zsh", "-c"]
 
