@@ -17,11 +17,10 @@ if [ -z "$GFW" ]; then
   curl --connect-timeout 2 -m 4 -s https://t.co >/dev/null || GFW=1
 fi
 
-
-gfw_git(){
-if [ -n "$GFW" ]; then
-  git config --global url."https://ghproxy.com/https://github.com".insteadOf "https://github.com"
-fi
+gfw_git() {
+  if [ -n "$GFW" ]; then
+    git config --global url."https://ghproxy.com/https://github.com".insteadOf "https://github.com"
+  fi
 }
 
 gfw_git
@@ -48,7 +47,6 @@ cd ~
 
 systemctl stop snapd || true
 apt remove --purge --assume-yes snapd gnome-software-plugin-snap
-apt autoremove -y
 
 apt-get update &&
   apt-get install -y tzdata language-pack-zh-hans zram-config
