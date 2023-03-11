@@ -90,8 +90,6 @@ cargo install --root /usr/local \
   stylua exa cargo-cache tokei \
   diskus cargo-edit cargo-update ntpd-rs rtx-cli erdtree
 
-sed -i '/^[[:space:]]*$/d' $sysctl_conf
-
 rtx_add() {
   rtx plugin add $1
   rtx install $1@latest

@@ -9,7 +9,6 @@ sd '^mem=\$\(.*\)' 'mem=$(echo $((totalmem * 2 * 1024))|cut -d. -f1)' $init
 
 cat $init
 echo ''
-
 systemctl enable --now zram-config
 
 sysctl_conf=/etc/sysctl.conf
@@ -24,4 +23,6 @@ sysctl_set() {
 sysctl_set page-cluster 0
 sysctl_set extfrag_threshold 0
 sysctl_set swappiness 100
+sed -i '/^[[:space:]]*$/d' $sysctl_conf
+
 sysctl -p
