@@ -80,22 +80,17 @@ cargo install --root /usr/local sd
 
 $DIR/zram.sh
 
-cargo install --root /usr/local --git https://github.com/user-tax-dev/ripgrep.git &
+cargo install --root /usr/local --git https://github.com/user-tax-dev/ripgrep.git
 
-cargo install --root /usr/local --git https://github.com/memorysafety/ntpd-rs ntpd &
+cargo install --root /usr/local --git https://github.com/memorysafety/ntpd-rs ntpd
 
 cargo install --root /usr/local --locked watchexec-cli
 
 cargo install --root /usr/local \
   stylua exa cargo-cache tokei \
-  diskus cargo-edit cargo-update ntpd-rs rtx-cli erdtree &
+  diskus cargo-edit cargo-update ntpd-rs rtx-cli erdtree
 
 sed -i '/^[[:space:]]*$/d' $sysctl_conf
-
-wait || {
-  echo "error : $?" >&2
-  exit 1
-}
 
 rtx_add() {
   rtx plugin add $1
@@ -135,11 +130,6 @@ if [ ! -d "$BUN_INSTALL" ]; then
   #$CURL https://bun.sh/install | bash
 fi
 
-wait || {
-  echo "error : $?" >&2
-  exit 1
-}
-
 export BUN_INSTALL="/opt/bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
@@ -149,14 +139,9 @@ pnpm install -g neovim npm-check-updates coffeescript node-pre-gyp \
   diff-so-fancy rome@next @antfu/ni prettier \
   @prettier/plugin-pug stylus-supremacy @u7/gitreset &
 
-go install mvdan.cc/sh/cmd/shfmt@latest &
-go install github.com/muesli/duf@master &
-go install github.com/louisun/heyspace@latest &
-
-wait || {
-  echo "error : $?" >&2
-  exit 1
-}
+go install mvdan.cc/sh/cmd/shfmt@latest
+go install github.com/muesli/duf@master
+go install github.com/louisun/heyspace@latest
 
 if [ ! -s "/usr/bin/gist" ]; then
   ln -s /usr/bin/gist-paste /usr/bin/gist
