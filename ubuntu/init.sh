@@ -48,11 +48,11 @@ apt-get update &&
   apt-get upgrade -y &&
   apt-get dist-upgrade -y &&
   apt-get install -y unzip gcc build-essential musl-tools g++ git bat \
-  libffi-dev zlib1g-dev liblzma-dev libssl-dev pkg-config pgformatter \
-  libreadline-dev libbz2-dev libsqlite3-dev \
-  libzstd-dev protobuf-compiler zsh \
-  software-properties-common curl wget cmake \
-  autoconf automake libtool
+    libffi-dev zlib1g-dev liblzma-dev libssl-dev pkg-config pgformatter \
+    libreadline-dev libbz2-dev libsqlite3-dev \
+    libzstd-dev protobuf-compiler zsh \
+    software-properties-common curl wget cmake \
+    autoconf automake libtool
 
 chsh -s /bin/zsh root
 
@@ -78,22 +78,7 @@ source $CARGO_HOME/env
 
 cargo install --root /usr/local sd
 
-sd '^echo \$mem' 'echo zstd > /sys/block/zram0/comp_algorithm ; echo $$mem' /usr/bin/init-zram-swapping
-
-systemctl enable --now zram-config
-
-sysctl_conf=/etc/sysctl.conf
-
-sysctl_set() {
-  if ! grep -q "vm.$1" "$sysctl_conf"; then
-    echo -e "\nvm.$1=$2\n" >>$sysctl_conf
-  fi
-  sysctl vm.$1=$2
-}
-
-sysctl_set page-cluster 0
-sysctl_set extfrag_threshold 0
-sysctl_set swappiness 100
+$DIR/zram.sh
 
 cargo install --root /usr/local --git https://github.com/user-tax-dev/ripgrep.git &
 
@@ -224,7 +209,6 @@ if [ -n "$GFW" ]; then
   git config --global url."https://ghproxy.com/https://github.com".insteadOf "https://github.com"
 fi
 
-
 useradd -s /usr/sbin/nologin -M ntpd-rs || true
 systemctl daemon-reload && systemctl daemon-reexec
 systemctl enable --now ntpd-rs
@@ -243,11 +227,11 @@ iporg=$(echo $ipinfo | jq -r ".org")
 ip=$(echo $ipinfo | jq -r '.ip' | sed 's/\./-/g')
 
 case $iporg in
-  *"Tencent"*) iporg=qq ;;
-  *"Contabo"*) iporg=con ;;
-  *"Alibaba"*) iporg=ali ;;
-  *"Amazon"*) iporg=aws ;;
-  *) iporg=unknown ;;
+*"Tencent"*) iporg=qq ;;
+*"Contabo"*) iporg=con ;;
+*"Alibaba"*) iporg=ali ;;
+*"Amazon"*) iporg=aws ;;
+*) iporg=unknown ;;
 esac
 
 ipaddr=$(echo $ipinfo | jq -r '.city' | dd conv=lcase 2>/dev/null | sed 's/\s//g')
