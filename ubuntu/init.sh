@@ -17,8 +17,16 @@ if [ -z "$GFW" ]; then
   curl --connect-timeout 2 -m 4 -s https://t.co >/dev/null || GFW=1
 fi
 
+
+gfw_git(){
 if [ -n "$GFW" ]; then
   git config --global url."https://ghproxy.com/https://github.com".insteadOf "https://github.com"
+fi
+}
+
+gfw_git
+
+if [ -n "$GFW" ]; then
   cd /etc/apt
   sed -i "s/archive.ubuntu.com/mirrors.163.com/g" /etc/apt/sources.list
   rsync -avI $ZHOS/ /
@@ -48,11 +56,11 @@ apt-get update &&
   apt-get upgrade -y &&
   apt-get dist-upgrade -y &&
   apt-get install -y unzip gcc build-essential musl-tools g++ git bat \
-  libffi-dev zlib1g-dev liblzma-dev libssl-dev pkg-config pgformatter \
-  libreadline-dev libbz2-dev libsqlite3-dev \
-  libzstd-dev protobuf-compiler zsh \
-  software-properties-common curl wget cmake \
-  autoconf automake libtool
+    libffi-dev zlib1g-dev liblzma-dev libssl-dev pkg-config pgformatter \
+    libreadline-dev libbz2-dev libsqlite3-dev \
+    libzstd-dev protobuf-compiler zsh \
+    software-properties-common curl wget cmake \
+    autoconf automake libtool
 
 chsh -s /bin/zsh root
 
@@ -78,39 +86,17 @@ source $CARGO_HOME/env
 
 cargo install --root /usr/local sd
 
-sd '^echo \$mem' 'echo zstd > /sys/block/zram0/comp_algorithm ; echo $$mem' /usr/bin/init-zram-swapping
+$DIR/zram.sh
 
-systemctl enable --now zram-config
+cargo install --root /usr/local --git https://github.com/user-tax-dev/ripgrep.git
 
-sysctl_conf=/etc/sysctl.conf
-
-sysctl_set() {
-  if ! grep -q "vm.$1" "$sysctl_conf"; then
-    echo -e "\nvm.$1=$2\n" >>$sysctl_conf
-  fi
-  sysctl vm.$1=$2
-}
-
-sysctl_set page-cluster 0
-sysctl_set extfrag_threshold 0
-sysctl_set swappiness 100
-
-cargo install --root /usr/local --git https://github.com/user-tax-dev/ripgrep.git &
-
-cargo install --root /usr/local --git https://github.com/memorysafety/ntpd-rs ntpd &
+cargo install --root /usr/local --git https://github.com/memorysafety/ntpd-rs ntpd
 
 cargo install --root /usr/local --locked watchexec-cli
 
 cargo install --root /usr/local \
   stylua exa cargo-cache tokei \
-  diskus cargo-edit cargo-update ntpd-rs rtx-cli erdtree &
-
-sed -i '/^[[:space:]]*$/d' $sysctl_conf
-
-wait || {
-  echo "error : $?" >&2
-  exit 1
-}
+  diskus cargo-edit cargo-update ntpd-rs rtx-cli erdtree
 
 rtx_add() {
   rtx plugin add $1
@@ -150,11 +136,6 @@ if [ ! -d "$BUN_INSTALL" ]; then
   #$CURL https://bun.sh/install | bash
 fi
 
-wait || {
-  echo "error : $?" >&2
-  exit 1
-}
-
 export BUN_INSTALL="/opt/bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
@@ -164,14 +145,9 @@ pnpm install -g neovim npm-check-updates coffeescript node-pre-gyp \
   diff-so-fancy rome@next @antfu/ni prettier \
   @prettier/plugin-pug stylus-supremacy @u7/gitreset &
 
-go install mvdan.cc/sh/cmd/shfmt@latest &
-go install github.com/muesli/duf@master &
-go install github.com/louisun/heyspace@latest &
-
-wait || {
-  echo "error : $?" >&2
-  exit 1
-}
+go install mvdan.cc/sh/cmd/shfmt@latest
+go install github.com/muesli/duf@master
+go install github.com/louisun/heyspace@latest
 
 if [ ! -s "/usr/bin/gist" ]; then
   ln -s /usr/bin/gist-paste /usr/bin/gist
@@ -183,6 +159,9 @@ cd /usr/local &&
   echo 'PATH=/opt/rust/bin:$PATH' >>/etc/profile.d/path.sh
 
 rsync -avI $ROOT/os/root/ /root
+
+gfw_git
+
 declare -A ZINIT
 ZINIT_HOME=/opt/zinit/zinit.git
 ZINIT[HOME_DIR]=/opt/zinit
@@ -220,6 +199,8 @@ cd /
 rsync -avI $ROOT/os/ /
 rsync -avI $DIR/os/ /
 
+gfw_git
+
 useradd -s /usr/sbin/nologin -M ntpd-rs || true
 systemctl daemon-reload && systemctl daemon-reexec
 systemctl enable --now ntpd-rs
@@ -238,11 +219,11 @@ iporg=$(echo $ipinfo | jq -r ".org")
 ip=$(echo $ipinfo | jq -r '.ip' | sed 's/\./-/g')
 
 case $iporg in
-  *"Tencent"*) iporg=qq ;;
-  *"Contabo"*) iporg=con ;;
-  *"Alibaba"*) iporg=ali ;;
-  *"Amazon"*) iporg=aws ;;
-  *) iporg=unknown ;;
+*"Tencent"*) iporg=qq ;;
+*"Contabo"*) iporg=con ;;
+*"Alibaba"*) iporg=ali ;;
+*"Amazon"*) iporg=aws ;;
+*) iporg=unknown ;;
 esac
 
 ipaddr=$(echo $ipinfo | jq -r '.city' | dd conv=lcase 2>/dev/null | sed 's/\s//g')
