@@ -5,7 +5,7 @@ set -ex
 init=/usr/bin/init-zram-swapping
 
 sd '^echo \$mem' 'echo zstd > /sys/block/zram0/comp_algorithm ; echo $$mem' $init
-sd '^mem=\$\(.*\)' 'mem=$(echo $((totalmem * 2 * 1024))|cut -d. -f1)' $init
+sd '^mem=\$\(.*\)' 'mem=$((totalmem * 1024))' $init
 
 cat $init
 echo ''
