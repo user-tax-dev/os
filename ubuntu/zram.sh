@@ -10,7 +10,7 @@ sd '^mem=\$\(.*\)' 'mem=$((totalmem * 1024))' $init
 cat $init
 echo ''
 systemctl enable --now zram-config
-
+systemctl restart zram-config
 sysctl_conf=/etc/sysctl.conf
 
 sysctl_set() {
