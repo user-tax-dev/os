@@ -17,8 +17,16 @@ if [ -z "$GFW" ]; then
   curl --connect-timeout 2 -m 4 -s https://t.co >/dev/null || GFW=1
 fi
 
+
+gfw_git(){
 if [ -n "$GFW" ]; then
   git config --global url."https://ghproxy.com/https://github.com".insteadOf "https://github.com"
+fi
+}
+
+gfw_git
+
+if [ -n "$GFW" ]; then
   cd /etc/apt
   sed -i "s/archive.ubuntu.com/mirrors.163.com/g" /etc/apt/sources.list
   rsync -avI $ZHOS/ /
@@ -90,8 +98,6 @@ cargo install --root /usr/local \
   stylua exa cargo-cache tokei \
   diskus cargo-edit cargo-update ntpd-rs rtx-cli erdtree
 
-sed -i '/^[[:space:]]*$/d' $sysctl_conf
-
 rtx_add() {
   rtx plugin add $1
   rtx install $1@latest
@@ -153,6 +159,9 @@ cd /usr/local &&
   echo 'PATH=/opt/rust/bin:$PATH' >>/etc/profile.d/path.sh
 
 rsync -avI $ROOT/os/root/ /root
+
+gfw_git
+
 declare -A ZINIT
 ZINIT_HOME=/opt/zinit/zinit.git
 ZINIT[HOME_DIR]=/opt/zinit
@@ -190,9 +199,7 @@ cd /
 rsync -avI $ROOT/os/ /
 rsync -avI $DIR/os/ /
 
-if [ -n "$GFW" ]; then
-  git config --global url."https://ghproxy.com/https://github.com".insteadOf "https://github.com"
-fi
+gfw_git
 
 useradd -s /usr/sbin/nologin -M ntpd-rs || true
 systemctl daemon-reload && systemctl daemon-reexec
