@@ -220,6 +220,11 @@ cd /
 rsync -avI $ROOT/os/ /
 rsync -avI $DIR/os/ /
 
+if [ -n "$GFW" ]; then
+  git config --global url."https://ghproxy.com/https://github.com".insteadOf "https://github.com"
+fi
+
+
 useradd -s /usr/sbin/nologin -M ntpd-rs || true
 systemctl daemon-reload && systemctl daemon-reexec
 systemctl enable --now ntpd-rs
