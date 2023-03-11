@@ -46,7 +46,7 @@ fi
 
 cd ~
 
-systemctl stop snapd
+systemctl stop snapd || true
 apt remove --purge --assume-yes snapd gnome-software-plugin-snap
 apt autoremove -y
 
