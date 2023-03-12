@@ -214,7 +214,7 @@ mkdir -p $BUILDDIR/boringssl/build || error_exit "Failed to create directory $BU
 cd $BUILDDIR/boringssl/build || error_exit "Failed to make $BUILDDIR/boringssl/build current directory."
 cmake -GNinja .. || error_exit "Failed to cmake boringssl."
 
-cpu_count=$(cat /proc/cpuinfo | grep "processor" | wc -l)
+cpu_count=$(nproc)
 if [ $cpu_count -eq 1 ]; then
   cpu_count=1
 else
