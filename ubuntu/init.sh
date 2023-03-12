@@ -47,7 +47,6 @@ cd ~
 
 systemctl stop snapd || true
 apt remove --purge --assume-yes snapd gnome-software-plugin-snap
-apt autoremove -y
 
 apt-get update &&
   apt-get install -y tzdata language-pack-zh-hans zram-config
