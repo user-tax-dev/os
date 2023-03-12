@@ -213,8 +213,15 @@ echo "$PROGNAME: Building boringssl..."
 mkdir -p $BUILDDIR/boringssl/build || error_exit "Failed to create directory $BUILDDIR/boringssl/build."
 cd $BUILDDIR/boringssl/build || error_exit "Failed to make $BUILDDIR/boringssl/build current directory."
 cmake -GNinja .. || error_exit "Failed to cmake boringssl."
-NINJAJOBS=$(cat /proc/cpuinfo | grep "processor" | wc -l)
-ninja -j$NINJAJOBS || error_exit "Faied to compile boringssl."
+
+cpu_count=$(cat /proc/cpuinfo | grep "processor" | wc -l)
+if [ $cpu_count -eq 1 ]; then
+  cpu_count=1
+else
+  ((cpu_count = cpu_count - 1))
+fi
+
+ninja -j$cpu_count || error_exit "Faied to compile boringssl."
 
 # Modifications to boringssl to satisfy nginx-quic
 echo "$PROGNAME: Modifying boringssl for nginx-quic..."
