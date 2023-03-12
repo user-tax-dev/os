@@ -3,7 +3,7 @@
 set -ex
 
 mesize=$(cat /proc/meminfo | grep -oP '^MemTotal:\s+\K\d+' /proc/meminfo)
-[ $mesize -gt 999999 ] && export NINJAJOBS=1
+[ $mesize -lt 999999 ] && export NINJAJOBS=1
 
 error_exit() {
   echo -e "${PROGNAME}: ${1:-"Unknown Error"}" >&2
