@@ -188,7 +188,7 @@ vi -E -s -u /etc/vim/sysinit.vim +PlugInstall +qa
 vi +'CocInstall -sync coc-json coc-yaml coc-css coc-python coc-vetur coc-tabnine coc-svelte' +qa
 find /etc/vim -type d -exec chmod 755 {} +
 
-pip install --upgrade pip glances pylint supervisor python-language-server ipython xonsh pynvim yapf flake8
+pip install --upgrade pip glances pylint supervisor python-language-server ipython xonsh pynvim ruff
 
 ldconfig
 
@@ -228,7 +228,7 @@ esac
 
 ipaddr=$(echo $ipinfo | jq -r '.city' | dd conv=lcase 2>/dev/null | sed 's/\s//g')
 
-mem=$(expr $(free -m|sed -n '2p'|awk '{print $2}') / 1000)
+mem=$(expr $(free -m | sed -n '2p' | awk '{print $2}') / 1000)
 
 name=$iporg-${mem}g-$(date +'%Y%m%d')-$ipaddr
 
