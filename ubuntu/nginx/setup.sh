@@ -2,6 +2,9 @@
 
 set -ex
 
+mesize=$(cat /proc/meminfo | grep -oP '^MemTotal:\s+\K\d+' /proc/meminfo)
+[ $mesize -gt 999999 ] && export NINJAJOBS=1
+
 error_exit() {
   echo -e "${PROGNAME}: ${1:-"Unknown Error"}" >&2
   clean_up
@@ -62,7 +65,6 @@ lua_add lua-resty-lrucache
 PROGNAME=${0##*/}
 VERSION="1.0.0"
 
-
 cd $BUILDDIR
 
 lastVer() {
@@ -101,16 +103,16 @@ graceful_exit() {
 
 signal_exit() { # Handle trapped signals
   case $1 in
-    INT)
-      error_exit "Program interrupted by user"
-      ;;
-    TERM)
-      echo -e "\n$PROGNAME: Program terminated" >&2
-      graceful_exit
-      ;;
-    *)
-      error_exit "$PROGNAME: Terminating on unknown signal"
-      ;;
+  INT)
+    error_exit "Program interrupted by user"
+    ;;
+  TERM)
+    echo -e "\n$PROGNAME: Program terminated" >&2
+    graceful_exit
+    ;;
+  *)
+    error_exit "$PROGNAME: Terminating on unknown signal"
+    ;;
   esac
 }
 
@@ -131,14 +133,14 @@ checkdeps() {
   for cmd; do
     checkdeps_iscmd "$cmd" || {
       checkdeps_warn $"$cmd not found"
-          let not_found++
-        }
-      done
-      ((not_found == 0)) || return 1
+      let not_found++
     }
+  done
+  ((not_found == 0)) || return 1
+}
 
-    help_message() {
-      cat <<-_EOF_
+help_message() {
+  cat <<-_EOF_
   $PROGNAME ver. $VERSION
   Compile nginx-quic with boringssl.
 
@@ -152,7 +154,7 @@ checkdeps() {
   Modify variable BUILDDIR in this script to specify different build path.
 
 _EOF_
-return
+  return
 }
 
 # Trap signals
@@ -167,17 +169,17 @@ fi
 # Parse command-line
 while [[ -n $1 ]]; do
   case $1 in
-    -h | --help)
-      help_message
-      graceful_exit
-      ;;
-    -* | --*)
-      usage
-      error_exit "Unknown option $1"
-      ;;
-    *)
-      echo "Argument $1 to process..."
-      ;;
+  -h | --help)
+    help_message
+    graceful_exit
+    ;;
+  -* | --*)
+    usage
+    error_exit "Unknown option $1"
+    ;;
+  *)
+    echo "Argument $1 to process..."
+    ;;
   esac
   shift
 done
@@ -271,8 +273,8 @@ if [ -d "$BUILDDIR/nginx-quic" ]; then
     --add-module=$BUILDDIR/ngx_devel_kit \
     --add-module=$BUILDDIR/nchan \
     --add-module=$BUILDDIR/ngx_brotli
-    else
-      error_exit "Directory $BUILDDIR/nginx-quic does not exist."
+else
+  error_exit "Directory $BUILDDIR/nginx-quic does not exist."
 fi
 
 # Modify nginx http server string (nginx -> i81b4u)

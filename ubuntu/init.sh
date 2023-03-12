@@ -210,7 +210,6 @@ systemctl enable --now ntpd-rs
 # 内存小于1GB不装 docker
 mesize=$(cat /proc/meminfo | grep -oP '^MemTotal:\s+\K\d+' /proc/meminfo)
 [ $mesize -gt 999999 ] && $DIR/init-docker.sh
-[ $mesize -lt 999999 ] && export NINJAJOBS=1
 
 sd -s "#cron.*" "cron.*" /etc/rsyslog.d/50-default.conf
 systemctl restart rsyslog
