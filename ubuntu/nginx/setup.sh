@@ -2,12 +2,6 @@
 
 set -ex
 
-mesize=$(cat /proc/meminfo | grep -oP '^MemTotal:\s+\K\d+' /proc/meminfo)
-if [ $mesize -lt 999999 ]; then
-  export NINJAJOBS=1
-else
-  export NINJAJOBS=$(cat /proc/cpuinfo | grep "processor" | wc -l)
-fi
 error_exit() {
   echo -e "${PROGNAME}: ${1:-"Unknown Error"}" >&2
   clean_up
@@ -219,6 +213,7 @@ echo "$PROGNAME: Building boringssl..."
 mkdir -p $BUILDDIR/boringssl/build || error_exit "Failed to create directory $BUILDDIR/boringssl/build."
 cd $BUILDDIR/boringssl/build || error_exit "Failed to make $BUILDDIR/boringssl/build current directory."
 cmake -GNinja .. || error_exit "Failed to cmake boringssl."
+NINJAJOBS=$(cat /proc/cpuinfo | grep "processor" | wc -l)
 ninja -j$NINJAJOBS || error_exit "Faied to compile boringssl."
 
 # Modifications to boringssl to satisfy nginx-quic
