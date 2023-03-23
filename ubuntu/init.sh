@@ -32,24 +32,26 @@ if [ -n "$GFW" ]; then
   source $ZHOS/root/.export
 fi
 
+systemctl stop snapd || true
+apt remove --purge --assume-yes snapd gnome-software-plugin-snap
+
+apt-get update &&
+  apt-get install -y tzdata zram-config cron
+
 if [ -n "$CN" ]; then
   export LANG=zh_CN.UTF-8
   export LC_ALL=zh_CN.UTF-8
   export LANGUAGE=zh_CN.UTF-8
   export TZ=Asia/Shanghai
+  apt-get install -y language-pack-zh-hans
   rsync -avI $ZHOS/etc/profile.d/lang.sh /etc/profile.d
   ln -snf /usr/share/zoneinfo/$TZ /etc/localtime &&
     echo $TZ >/etc/timezone &&
     locale-gen zh_CN.UTF-8
+  $DIR/cron.sh
 fi
 
 cd ~
-
-systemctl stop snapd || true
-apt remove --purge --assume-yes snapd gnome-software-plugin-snap
-
-apt-get update &&
-  apt-get install -y tzdata language-pack-zh-hans zram-config
 
 export DEBIAN=_FRONTEND noninteractive
 export TERM=xterm-256color
@@ -75,7 +77,7 @@ apt-get update
 apt-get install -y fd-find ncdu exuberant-ctags asciinema man \
   tzdata sudo tmux openssh-client libpq-dev \
   rsync mlocate gist less util-linux apt-utils socat \
-  htop cron postgresql-client bsdmainutils \
+  htop postgresql-client bsdmainutils \
   direnv iputils-ping dstat zstd pixz jq git-extras \
   aptitude clang-format p7zip-full openssh-server
 
@@ -258,4 +260,5 @@ sed -i "s/#ClientAliveInterval 0/ClientAliveInterval 60/g" /etc/ssh/sshd_config
 sed -i "s/#ClientAliveCountMax 3/ClientAliveCountMax 3/g" /etc/ssh/sshd_config
 service sshd reload
 apt autoremove -y
+
 echo '👌 ✅'
