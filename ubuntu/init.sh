@@ -66,6 +66,12 @@ apt-get update &&
 
 chsh -s /bin/zsh root
 
+# How to Install PostgreSQL 15 on Ubuntu 22.04 Step-by-Step https://www.linuxtechi.com/how-to-install-postgresql-on-ubuntu/
+echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" >/etc/apt/sources.list.d/pgdg.list
+wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo tee /etc/apt/trusted.gpg.d/pgdg.asc &>/dev/null
+# fix apt-get update 报错 N: Skipping acquire of configured file 'main/binary-i386/Packages' as repository 'http://apt.postgresql.org/pub/repos/apt jammy-pgdg InRelease' doesn't support architecture 'i386' 怎么解决
+dpkg --remove-architecture i386
+apt-get update
 apt-get install -y fd-find ncdu exuberant-ctags asciinema man \
   tzdata sudo tmux openssh-client libpq-dev \
   rsync mlocate gist less util-linux apt-utils socat \
